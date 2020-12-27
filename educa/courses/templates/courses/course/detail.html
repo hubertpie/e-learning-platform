@@ -8,10 +8,22 @@
         <div class="module">
             <h2>Course description</h2>
             <p>
-                <a href="{% url 'course_list_subject' subject.slug%}">{{ subject.title }}</a>, {{ course.modules_count}} module {{ course.modules.count|pluralize:'s'}},
+                <a href="{% url 'course_list_subject' subject.slug%}">{{ subject.title }}</a>, {{ course.modules.count }} module{{ course.modules.count|pluralize:'s'}},
                 instructor: {{ course.owner.get_full_name}}
             </p>
             {{ object.overview|linebreaks }}
+
+            {% if request.user.is_authenticated %}
+                <form action="{% url 'student_enroll_course' %}" method="POST">
+                    {{ enroll_form }}
+                    {% csrf_token %}
+                    <input type="submit" value="Enroll">
+                </form>
+            {% else %}
+                <a href="{% url 'student_registration' %}" class="button">
+                    Sign in, to enroll to this course
+                </a>
+            {% endif %}
         </div>
     {% endwith%}
 {% endblock %}
